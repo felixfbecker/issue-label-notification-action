@@ -1,44 +1,89 @@
-const { correctRecipients, correctMessage } = require('./utils');
+import {
+  correctRecipients,
+  correctMessage,
+  messageTemplateToRegExp,
+} from "./utils";
 
-test('changes nothing when configuration is correct', () => {
-  const complexInput = `@docs-team @docs-team
-  @docs-team @docs-team
-  @docs-team @docs-team
-  @docs-team @docs-team
-  @docs-team  @docs-team
-  @docs-team		@docs-team`;
+describe("correctRecipients", () => {
+  test("changes nothing when configuration is correct", () => {
+    const complexInput = `@docs-team @docs-team
+    @docs-team @docs-team
+    @docs-team @docs-team
+    @docs-team @docs-team
+    @docs-team  @docs-team
+    @docs-team		@docs-team`;
 
-  expect(correctRecipients(complexInput)).toBe(complexInput);
-  expect(correctRecipients('@docs-team')).toBe('@docs-team');
-  expect(correctRecipients('@1234')).toBe('@1234');
+    expect(correctRecipients(complexInput)).toBe(complexInput);
+    expect(correctRecipients("@docs-team")).toBe("@docs-team");
+    expect(correctRecipients("@1234")).toBe("@1234");
+  });
+
+  test("adds missing ambersands", () => {
+    const input = `@docs-team docs-team
+    docs-team @docs-team
+    docs-team docs-team
+    @docs-team @docs-team
+    @docs-team  docs-team
+    @docs-team		docs-team
+    1234 @1234`;
+
+    const output = `@docs-team @docs-team
+    @docs-team @docs-team
+    @docs-team @docs-team
+    @docs-team @docs-team
+    @docs-team  @docs-team
+    @docs-team		@docs-team
+    @1234 @1234`;
+
+    expect(correctRecipients(input)).toBe(output);
+  });
 });
 
-test('adds missing ambersands', () => {
-  const input = `@docs-team docs-team
-  docs-team @docs-team
-  docs-team docs-team
-  @docs-team @docs-team
-  @docs-team  docs-team
-  @docs-team		docs-team
-  1234 @1234`
+describe("correctMessage", () => {
+  test("formats message when configuration is correct", () => {
+    const input =
+      'Heads up {recipients} - the "{label}" label was applied to this issue.';
+    const recipients = "@docs-team @1234";
+    const label = "documentation";
 
-  const output = `@docs-team @docs-team
-  @docs-team @docs-team
-  @docs-team @docs-team
-  @docs-team @docs-team
-  @docs-team  @docs-team
-  @docs-team		@docs-team
-  @1234 @1234`;
+    const output =
+      'Heads up @docs-team @1234 - the "documentation" label was applied to this issue.';
 
-  expect(correctRecipients(input)).toBe(output);
+    expect(correctMessage(input, recipients, label)).toBe(output);
+  });
 });
 
-test('formats message when configuration is correct', () => {
-  const input = 'Heads up {recipients} - the "{label}" label was applied to this issue.';
-  const recipients = '@docs-team @1234';
-  const label = 'documentation';
+describe("messageTemplateToRegExp", () => {
+  test("returns a regexp that matches if a string includes the message already", () => {
+    const pattern = "/cc {recipients}";
+    const body = `
+      This is a test issue.
 
-  const output = 'Heads up @docs-team @1234 - the "documentation" label was applied to this issue.';
+      /cc @docs-team @1234
+    `;
+    expect(messageTemplateToRegExp(pattern).test(body)).toBe(true);
+  });
+  test("regexp does not match if string is not in the message", () => {
+    const pattern = "/cc {recipients}";
+    const body = `
+      This is a test issue.
+    `;
+    expect(messageTemplateToRegExp(pattern).test(body)).toBe(false);
+  });
+  test("regexp can replace existing message", () => {
+    const pattern = "/cc {recipients}";
+    const bodyBefore = `
+      This is a test issue.
 
-  expect(correctMessage(input, recipients, label)).toBe(output);
+      /cc @docs-team @some-team
+    `;
+    const bodyAfter = `
+      This is a test issue.
+
+      /cc @docs-team @other-team
+    `;
+    const regexp = messageTemplateToRegExp(pattern);
+    const message = "/cc @docs-team @other-team";
+    expect(bodyBefore.replace(regexp, message)).toBe(bodyAfter);
+  });
 });

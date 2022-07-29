@@ -1,20 +1,24 @@
-name: 'Issue Label Notifier'
-description: 'Notify individuals or teams based on issue labels.'
+name: "Issue Label Notifier"
+description: "Notify individuals or teams based on issue labels."
 inputs:
+  edit_body:
+    description: "Whether to edit the body to append `message` instead of posting a comment."
+    required: false
   token:
-    description: 'The GitHub authentication token.'
+    description: "The GitHub authentication token."
     required: false
     default: ${{ github.token }}
   recipients:
-    description: 'Mapping of label to notification recipients.'
+    description: "Mapping of label to notification recipients."
     required: true
   message:
-    description: 'The message to post in the issue comment.'
+    description: "The message to post in the issue comment."
+    required: false
     default: 'Heads up {recipients} - the "{label}" label was applied to this issue.'
 runs:
-  using: 'node12'
-  main: 'dist/index.js'
+  using: "node16"
+  main: "dist/index.js"
 
 branding:
-  icon: 'bell'
-  color: 'gray-dark'
+  icon: "bell"
+  color: "gray-dark"

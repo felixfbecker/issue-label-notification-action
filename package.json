@@ -3,8 +3,12 @@
   "version": "1.0.0",
   "description": "Notify individuals or teams based on issue labels.",
   "main": "index.js",
+  "engines": {
+    "node": "^16.0.0"
+  },
+  "type": "module",
   "scripts": {
-    "test": "jest",
+    "test": "node --experimental-vm-modules node_modules/.bin/jest",
     "build": "ncc build index.js -o dist"
   },
   "repository": {
@@ -21,9 +25,10 @@
   "dependencies": {
     "@actions/core": "^1.2.4",
     "@actions/github": "^4.0.0",
-    "@zeit/ncc": "^0.22.3"
+    "escape-string-regexp": "^5.0.0"
   },
   "devDependencies": {
-    "jest": "^25.2.4"
+    "@vercel/ncc": "^0.34.0",
+    "jest": "^28.1.2"
   }
 }
