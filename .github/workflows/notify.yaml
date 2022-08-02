@@ -1,0 +1,16 @@
+name: Test notify users based on issue labels
+
+on:
+  issues:
+    types: [labeled]
+
+jobs:
+  notify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: felixfbecker/issue-label-notification-action
+        with:
+          edit_body: true
+          message: /cc {recipients}
+          recipients: |
+            test=@felixfbecker
