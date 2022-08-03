@@ -2,7 +2,7 @@ import {
   correctRecipients,
   correctMessage,
   messageTemplateToRegExp,
-} from "./utils";
+} from "./utils.mjs";
 
 describe("correctRecipients", () => {
   test("changes nothing when configuration is correct", () => {
