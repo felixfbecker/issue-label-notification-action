@@ -8,7 +8,7 @@ jobs:
   notify:
     runs-on: ubuntu-latest
     steps:
-      - uses: felixfbecker/issue-label-notification-action
+      - uses: felixfbecker/issue-label-notification-action@master
         with:
           edit_body: true
           message: /cc {recipients}
