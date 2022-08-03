@@ -9,7 +9,7 @@ import {
 async function run() {
   try {
     const issueNumber = github.context.payload.issue.number;
-    const issueBody = github.context.payload.issue.body;
+    const issueBody = github.context.payload.issue.body ?? "";
     const owner = github.context.repo.owner;
     const repo = github.context.repo.repo;
     const label = github.context.payload.label.name;
@@ -31,7 +31,7 @@ async function run() {
       if (core.getInput("edit_body")) {
         const regexp = messageTemplateToRegExp(messageTemplate);
         // If body already contains message, replace it, otherwise append
-        const updatedBody = issueBody.test(regexp)
+        const updatedBody = regexp.test(issueBody)
           ? issueBody.replace(regexp, message)
           : issueBody + `\n\n${message}`;
         await octokit.issues.update({
