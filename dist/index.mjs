@@ -9488,8 +9488,8 @@ async function run() {
     const messageTemplate = core.getInput("message");
 
     if (match) {
-      const message = correctMessage(messageTemplate, recipients, label);
       const recipients = correctRecipients(match.split("=")[1]);
+      const message = correctMessage(messageTemplate, recipients, label);
       if (core.getInput("edit_body")) {
         const issue = await octokit.issues.get({
           issue_number: issueNumber,

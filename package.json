@@ -8,7 +8,8 @@
   },
   "scripts": {
     "test": "node --experimental-vm-modules node_modules/.bin/jest --testMatch '**/*.test.mjs'",
-    "build": "ncc build index.mjs -o dist"
+    "build": "ncc build index.mjs -o dist",
+    "prepare": "husky install"
   },
   "repository": {
     "type": "git",
@@ -28,6 +29,7 @@
   },
   "devDependencies": {
     "@vercel/ncc": "^0.34.0",
+    "husky": "^8.0.1",
     "jest": "^28.1.2"
   }
 }
